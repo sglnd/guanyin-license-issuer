@@ -1,0 +1,13 @@
+{
+  "name": "guanyin-license-issuer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "keygen": "node src/cli.mjs keygen",
+    "issue": "node src/cli.mjs issue",
+    "check": "node --check src/license.mjs && node --check src/cli.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": { "node": ">=22" }
+}

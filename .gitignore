@@ -19,4 +19,4 @@ license-requests/
 
 node_modules/
 coverage/
-
+*.token
