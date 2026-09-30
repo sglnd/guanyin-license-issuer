@@ -1,0 +1,22 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Signing material must never be committed.
+keys/
+secrets/
+*.key
+*.pem
+*.p8
+*.p12
+*.pfx
+*.jwk
+
+# Generated customer licenses and requests are operational data.
+license-output/
+license-requests/
+
+node_modules/
+coverage/
+
