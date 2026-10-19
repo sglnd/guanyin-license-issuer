@@ -2,12 +2,17 @@
 
 观因企业授权的内部签发项目。此项目仅供供应方受控环境使用，不属于客户交付物，也不应被企业版镜像或部署流水线依赖。
 
+## 固定签发身份
+
+`public/guanyin-license-public.pub` 是观因企业版当前固定的 Ed25519 验签公钥；`guanyin-enterprise` 的 Kubernetes 清单必须使用完全相同的公钥。对应私钥只存放在受控签发环境的 `keys/license-private.pem` 或替代的 KMS/HSM 中，绝不提交到 Git。
+
+日常签发和续期只使用既有私钥，**不得生成新的密钥对**。密钥轮换是独立的安全操作：需要显式执行 `keygen --rotate yes`，同步更新企业版公钥配置，并重新签发全部有效客户的 License。
+
 ## 使用
 
 要求 Node.js 22 或更高版本，无第三方依赖。
 
 ```bash
-npm run keygen -- --out ./keys
 npm run issue -- \
   --customer "某某科技有限公司" \
   --expires 2027-12-31 \
@@ -15,7 +20,7 @@ npm run issue -- \
   --output ./customer-license.token
 ```
 
-`keygen` 生成 Ed25519 密钥对。私钥只保留在受控签发环境；将公钥内容配置为企业版控制面的 `GUANYIN_LICENSE_PUBLIC_KEY`。`issue` 默认生成唯一 License ID，并在标准错误输出中显示客户和到期时间，Token 输出到指定文件。
+`issue` 默认生成唯一 License ID，并在标准错误输出中显示客户和到期时间，Token 输出到指定文件。私钥只保留在受控签发环境；企业版控制面只使用 `public/guanyin-license-public.pub` 对应的公钥。
 
 到期日期按 UTC 当日 `23:59:59` 处理。客户名称会去除首尾空格并进行 Unicode NFC 规范化，企业版录入时必须使用同一完整名称。
 
@@ -31,6 +36,7 @@ npm run issue -- \
 
 ```text
 docs/             签发模型、安全与运维文档
+public/           受版本控制的观因企业版验签公钥
 src/              离线密钥生成与签发命令行
 test/             运行时生成临时测试密钥的自动化测试
 ```

@@ -14,6 +14,7 @@ function options(values) {
 }
 
 async function keygen(args) {
+  if (args.rotate !== 'yes') throw new Error('密钥对是长期签发身份。仅在批准轮换时执行 keygen，并显式传入 --rotate yes')
   const target = resolve(args.out || './keys')
   const pair = generateLicenseKeyPair()
   await mkdir(target, { recursive: true, mode: 0o700 })
@@ -42,7 +43,7 @@ try {
   const args = options(values)
   if (command === 'keygen') await keygen(args)
   else if (command === 'issue') await issue(args)
-  else throw new Error('用法：node src/cli.mjs keygen --out <目录>，或 issue --customer <客户名称> --expires <YYYY-MM-DD> --key <私钥> [--output <文件>]')
+  else throw new Error('用法：node src/cli.mjs keygen --rotate yes --out <目录>，或 issue --customer <客户名称> --expires <YYYY-MM-DD> --key <私钥> [--output <文件>]')
 } catch (error) {
   process.stderr.write(`${error.message}\n`)
   process.exitCode = 1

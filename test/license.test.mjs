@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { createPublicKey, verify } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { generateLicenseKeyPair, issueLicense } from '../src/license.mjs'
 
@@ -12,4 +13,9 @@ test('issues a verifiable Ed25519 enterprise license', () => {
     iss: 'guanyin-license-issuer', aud: 'guanyin-enterprise', edition: 'enterprise', license_id: 'lic_test',
     customer_name: '测试客户', iat: 1767225600, nbf: 1767225600, exp: 1830297599,
   })
+})
+
+test('the tracked enterprise verification key is a valid Ed25519 public key', async () => {
+  const publicKey = await readFile(new URL('../public/guanyin-license-public.pub', import.meta.url), 'utf8')
+  assert.doesNotThrow(() => createPublicKey(publicKey))
 })
